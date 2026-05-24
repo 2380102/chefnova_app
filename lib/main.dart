@@ -10,8 +10,11 @@ import 'screens/profile_screen.dart';
 import 'screens/edit_profile_screen.dart';
 import 'screens/signup_screen.dart';
 import 'models/user_model.dart';
+// === PHASE 2: Naye screens ===
+import 'screens/recipes/recipe_list_screen.dart';
+import 'screens/ingredients/ingredient_list_screen.dart';
 
-// Global current user — class ke pattern jaisa
+// Global current user
 UserModel currentUser = UserModel();
 
 void main() {
@@ -37,9 +40,9 @@ class ChefNovaApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      // Named routes — class ke main.dart jaisa
       initialRoute: '/login',
       routes: {
+        // === Purane routes (bilkul waise hi) ===
         '/login':        (context) => const LoginScreen(),
         '/signup':       (context) => const SignupScreen(),
         '/':             (context) => const HomeScreen(),
@@ -48,6 +51,9 @@ class ChefNovaApp extends StatelessWidget {
         '/checkout':     (context) => const CheckoutScreen(),
         '/profile':      (context) => const ProfileScreen(),
         '/edit_profile': (context) => const EditProfileScreen(),
+        // === PHASE 2: Naye routes ===
+        '/manage_recipes':     (context) => const RecipeListScreen(),
+        '/manage_ingredients': (context) => const IngredientListScreen(),
       },
     );
   }

@@ -74,7 +74,6 @@ class _HomeScreenState extends State<HomeScreen> {
               itemBuilder: (context, index) {
                 final dish = _filteredDishes[index];
                 return GestureDetector(
-                  // class ke ProfileForm jaisa named route + arguments
                   onTap: () => Navigator.pushNamed(
                     context,
                     '/detail',
