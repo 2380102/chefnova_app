@@ -1,5 +1,3 @@
-// lib/models/recipe_db_model.dart
-// MySQL 'recipes' table ka Dart model
 
 class RecipeDB {
   final int?   id;
@@ -20,7 +18,7 @@ class RecipeDB {
     required this.emoji,
   });
 
-  // API se JSON aata hai use RecipeDB mein convert karo
+
   factory RecipeDB.fromJson(Map<String, dynamic> json) {
     return RecipeDB(
       id:          json['id'],
@@ -33,7 +31,7 @@ class RecipeDB {
     );
   }
 
-  // RecipeDB ko JSON mein convert karo (API ko bhejna ke liye)
+
   Map<String, dynamic> toJson() => {
     'name':        name,
     'category':    category,

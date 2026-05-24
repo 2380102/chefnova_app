@@ -1,5 +1,4 @@
-// lib/models/ingredient_model.dart
-// MySQL 'ingredients' table ka Dart model
+
 
 class Ingredient {
   final int?   id;
@@ -7,7 +6,7 @@ class Ingredient {
   final String name;
   final String quantity;
   final String unit;
-  final String? recipeName; // JOIN se aata hai
+  final String? recipeName;
 
   Ingredient({
     this.id,

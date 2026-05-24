@@ -1,15 +1,8 @@
--- =====================================================
--- ChefNova Phase 2 - Database Setup
--- Yeh file MySQL Workbench mein run karein
--- =====================================================
 
--- Database banao
 CREATE DATABASE IF NOT EXISTS chefnova_db;
 USE chefnova_db;
 
--- =====================================================
--- TABLE 1: recipes
--- =====================================================
+
 CREATE TABLE IF NOT EXISTS recipes (
   id          INT AUTO_INCREMENT PRIMARY KEY,
   name        VARCHAR(150) NOT NULL,
@@ -21,9 +14,7 @@ CREATE TABLE IF NOT EXISTS recipes (
   created_at  TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
 );
 
--- =====================================================
--- TABLE 2: ingredients
--- =====================================================
+
 CREATE TABLE IF NOT EXISTS ingredients (
   id          INT AUTO_INCREMENT PRIMARY KEY,
   recipe_id   INT          NOT NULL,
@@ -34,9 +25,7 @@ CREATE TABLE IF NOT EXISTS ingredients (
   FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE CASCADE
 );
 
--- =====================================================
--- Sample Data - recipes
--- =====================================================
+
 INSERT INTO recipes (name, category, description, cook_time, difficulty, emoji) VALUES
 ('Chicken Biryani',  'Main Course', 'Authentic Pakistani Biryani with aromatic spices', 45,  'Medium', '🍛'),
 ('Margherita Pizza', 'Fast Food',   'Classic Italian pizza with fresh toppings',         30,  'Easy',   '🍕'),
@@ -45,9 +34,6 @@ INSERT INTO recipes (name, category, description, cook_time, difficulty, emoji) 
 ('Nihari',           'Main Course', 'Slow-cooked beef stew Karachi style',               180, 'Hard',   '🍲'),
 ('Halwa Puri',       'Breakfast',   'Classic Pakistani breakfast combo',                  40,  'Medium', '🍮');
 
--- =====================================================
--- Sample Data - ingredients
--- =====================================================
 INSERT INTO ingredients (recipe_id, name, quantity, unit) VALUES
 (1, 'Chicken',           '500', 'g'),
 (1, 'Basmati Rice',      '2',   'cups'),

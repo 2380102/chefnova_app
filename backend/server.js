@@ -1,5 +1,4 @@
-// backend/server.js
-// Main backend file - yeh run karo: node server.js
+
 
 const express = require('express');
 const cors    = require('cors');
@@ -19,7 +18,7 @@ app.get('/', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`✅ Backend running: http://localhost:${PORT}`);
-  console.log(`📌 Recipes:     http://localhost:${PORT}/api/recipes`);
-  console.log(`📌 Ingredients: http://localhost:${PORT}/api/ingredients`);
+  console.log(`✅ Backend running: http:
+  console.log(`📌 Recipes:     http:
+  console.log(`📌 Ingredients: http:
 });

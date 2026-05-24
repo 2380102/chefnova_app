@@ -1,5 +1,3 @@
-// lib/services/ingredient_service.dart
-// Node.js backend se ingredients ke liye API calls
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -8,7 +6,7 @@ import '../models/ingredient_model.dart';
 class IngredientService {
   static const String _base = 'http://10.0.2.2:3000/api/ingredients';
 
-  // Sare ingredients lao
+
   static Future<List<Ingredient>> getAll() async {
     final res = await http.get(Uri.parse(_base));
     if (res.statusCode == 200) {
@@ -18,7 +16,7 @@ class IngredientService {
     throw Exception('Ingredients load nahi hue: ${res.statusCode}');
   }
 
-  // Kisi ek recipe ke ingredients lao
+
   static Future<List<Ingredient>> getByRecipe(int recipeId) async {
     final res = await http.get(Uri.parse('$_base/recipe/$recipeId'));
     if (res.statusCode == 200) {

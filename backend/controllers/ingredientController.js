@@ -1,9 +1,7 @@
-// backend/controllers/ingredientController.js
-// Ingredients table ke liye CRUD operations
 
 const db = require('../config/db');
 
-// GET /api/ingredients - Sare ingredients lao (recipe name ke saath)
+
 const getAllIngredients = async (req, res) => {
   try {
     const [rows] = await db.query(`
@@ -18,7 +16,7 @@ const getAllIngredients = async (req, res) => {
   }
 };
 
-// GET /api/ingredients/recipe/:recipeId - Kisi ek recipe ke ingredients
+
 const getIngredientsByRecipe = async (req, res) => {
   try {
     const [rows] = await db.query(
@@ -31,7 +29,7 @@ const getIngredientsByRecipe = async (req, res) => {
   }
 };
 
-// GET /api/ingredients/:id - Ek ingredient lao
+
 const getIngredientById = async (req, res) => {
   try {
     const [rows] = await db.query('SELECT * FROM ingredients WHERE id = ?', [req.params.id]);
@@ -42,7 +40,7 @@ const getIngredientById = async (req, res) => {
   }
 };
 
-// POST /api/ingredients - Naya ingredient banao
+
 const createIngredient = async (req, res) => {
   try {
     const { recipe_id, name, quantity, unit } = req.body;
@@ -59,7 +57,7 @@ const createIngredient = async (req, res) => {
   }
 };
 
-// PUT /api/ingredients/:id - Ingredient update karo
+
 const updateIngredient = async (req, res) => {
   try {
     const { recipe_id, name, quantity, unit } = req.body;
@@ -74,7 +72,7 @@ const updateIngredient = async (req, res) => {
   }
 };
 
-// DELETE /api/ingredients/:id - Ingredient delete karo
+
 const deleteIngredient = async (req, res) => {
   try {
     const [result] = await db.query('DELETE FROM ingredients WHERE id = ?', [req.params.id]);

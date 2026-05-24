@@ -1,9 +1,8 @@
-// backend/controllers/recipeController.js
-// Recipes table ke liye CRUD operations
+
 
 const db = require('../config/db');
 
-// GET /api/recipes - Sare recipes lao
+
 const getAllRecipes = async (req, res) => {
   try {
     const [rows] = await db.query('SELECT * FROM recipes ORDER BY created_at DESC');
@@ -13,7 +12,7 @@ const getAllRecipes = async (req, res) => {
   }
 };
 
-// GET /api/recipes/:id - Ek recipe lao
+
 const getRecipeById = async (req, res) => {
   try {
     const [rows] = await db.query('SELECT * FROM recipes WHERE id = ?', [req.params.id]);
@@ -24,7 +23,7 @@ const getRecipeById = async (req, res) => {
   }
 };
 
-// POST /api/recipes - Nayi recipe banao
+
 const createRecipe = async (req, res) => {
   try {
     const { name, category, description, cook_time, difficulty, emoji } = req.body;
@@ -41,7 +40,7 @@ const createRecipe = async (req, res) => {
   }
 };
 
-// PUT /api/recipes/:id - Recipe update karo
+
 const updateRecipe = async (req, res) => {
   try {
     const { name, category, description, cook_time, difficulty, emoji } = req.body;
@@ -56,7 +55,7 @@ const updateRecipe = async (req, res) => {
   }
 };
 
-// DELETE /api/recipes/:id - Recipe delete karo
+
 const deleteRecipe = async (req, res) => {
   try {
     const [result] = await db.query('DELETE FROM recipes WHERE id = ?', [req.params.id]);

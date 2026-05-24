@@ -1,4 +1,4 @@
-// backend/routes/recipeRoutes.js
+
 const express = require('express');
 const router  = express.Router();
 const { getAllRecipes, getRecipeById, createRecipe, updateRecipe, deleteRecipe } = require('../controllers/recipeController');

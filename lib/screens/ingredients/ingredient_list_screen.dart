@@ -1,5 +1,3 @@
-// lib/screens/ingredients/ingredient_list_screen.dart
-// Ingredients ki list - Read, Delete, Add/Edit navigation
 
 import 'package:flutter/material.dart';
 import '../../models/ingredient_model.dart';
