@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import '../data/accounts_data.dart';
 import '../main.dart';
 import '../main_scaffold.dart';
+import '../models/user_model.dart';
+import '../services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -11,11 +12,11 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  // class ke CompleteForm jaisa _formKey
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
+  final _formKey           = GlobalKey<FormState>();
+  final _emailController   = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscure = true;
+  bool _loading = false;
 
   @override
   void dispose() {
@@ -25,40 +26,40 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   bool _isValidEmail(String email) =>
-      RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email);
+      RegExp(r'^[^\@\s]+@[^\@\s]+\.[^\@\s]+$').hasMatch(email);
 
-  void _login() {
-    // class ke CompleteForm jaisa validate()
+  Future<void> _login() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final email = _emailController.text.trim();
-    final password = _passwordController.text;
+    setState(() => _loading = true);
 
-    if (!registeredAccounts.containsKey(email)) {
+    final result = await AuthService.login(
+      email:    _emailController.text.trim(),
+      password: _passwordController.text,
+    );
+
+    if (!mounted) return;
+    setState(() => _loading = false);
+
+    if (result['success'] == true) {
+      final u = result['user'];
+      currentUser = UserModel(
+        id:      u['id'] ?? 0,
+        name:    u['name'] ?? '',
+        email:   u['email'] ?? '',
+        phone:   u['phone'] ?? '',
+        address: u['address'] ?? '',
+      );
+      Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('This email is not registered'),
+        SnackBar(
+          content: Text(result['message'] ?? 'Login failed'),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
         ),
       );
-      return;
     }
-
-    if (registeredAccounts[email]!.password != password) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Incorrect password. Please try again'),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-      return;
-    }
-
-    currentUser = registeredAccounts[email]!;
-    Navigator.pushNamedAndRemoveUntil(
-        context, '/', (route) => false);
   }
 
   @override
@@ -75,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
               decoration: const BoxDecoration(
                 color: kBlue,
                 borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(36),
+                  bottomLeft:  Radius.circular(36),
                   bottomRight: Radius.circular(36),
                 ),
               ),
@@ -91,116 +92,69 @@ class _LoginScreenState extends State<LoginScreen> {
                           fontWeight: FontWeight.bold)),
                   SizedBox(height: 6),
                   Text('Discover & Cook Your Favourite Dishes',
-                      style:
-                      TextStyle(color: Colors.white70, fontSize: 13)),
+                      style: TextStyle(color: Colors.white70, fontSize: 13)),
                 ],
               ),
             ),
 
             Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 24, vertical: 28),
-              // class ke SimpleForm/CompleteForm jaisa Form
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
               child: Form(
                 key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text('Welcome Back!',
-                        style: TextStyle(
-                            fontSize: 22, fontWeight: FontWeight.bold)),
+                        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 4),
                     const Text('Login to continue',
-                        style:
-                        TextStyle(color: Colors.grey, fontSize: 13)),
+                        style: TextStyle(color: Colors.grey, fontSize: 13)),
                     const SizedBox(height: 24),
 
-                    // Email field — class ke TextFormField jaisa
+                    // Email
                     const Text('Email',
-                        style:
-                        TextStyle(fontSize: 13, color: Colors.grey)),
+                        style: TextStyle(fontSize: 13, color: Colors.grey)),
                     const SizedBox(height: 4),
                     TextFormField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
                         hintText: 'Enter your email',
-                        prefixIcon: const Icon(Icons.email_outlined,
-                            color: kBlue),
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide:
-                          const BorderSide(color: kBorder),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide:
-                          const BorderSide(color: kBorder),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(
-                              color: kBlue, width: 2),
-                        ),
+                        prefixIcon: const Icon(Icons.email_outlined, color: kBlue),
+                        filled: true, fillColor: Colors.white,
+                        border:         OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: kBorder)),
+                        enabledBorder:  OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: kBorder)),
+                        focusedBorder:  OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: kBlue, width: 2)),
                       ),
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Email is required';
-                        }
-                        if (!_isValidEmail(value)) {
-                          return 'Please enter a valid email address';
-                        }
+                        if (value == null || value.isEmpty) return 'Email is required';
+                        if (!_isValidEmail(value)) return 'Please enter a valid email address';
                         return null;
                       },
                     ),
                     const SizedBox(height: 14),
 
-                    // Password field
+                    // Password
                     const Text('Password',
-                        style:
-                        TextStyle(fontSize: 13, color: Colors.grey)),
+                        style: TextStyle(fontSize: 13, color: Colors.grey)),
                     const SizedBox(height: 4),
                     TextFormField(
                       controller: _passwordController,
                       obscureText: _obscure,
                       decoration: InputDecoration(
                         hintText: 'Enter your password',
-                        prefixIcon: const Icon(Icons.lock_outline,
-                            color: kBlue),
+                        prefixIcon: const Icon(Icons.lock_outline, color: kBlue),
                         suffixIcon: IconButton(
-                          icon: Icon(
-                            _obscure
-                                ? Icons.visibility_off
-                                : Icons.visibility,
-                            color: Colors.grey,
-                          ),
-                          onPressed: () =>
-                              setState(() => _obscure = !_obscure),
+                          icon: Icon(_obscure ? Icons.visibility_off : Icons.visibility, color: Colors.grey),
+                          onPressed: () => setState(() => _obscure = !_obscure),
                         ),
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide:
-                          const BorderSide(color: kBorder),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide:
-                          const BorderSide(color: kBorder),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(
-                              color: kBlue, width: 2),
-                        ),
+                        filled: true, fillColor: Colors.white,
+                        border:         OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: kBorder)),
+                        enabledBorder:  OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: kBorder)),
+                        focusedBorder:  OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: kBlue, width: 2)),
                       ),
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Password is required';
-                        }
+                        if (value == null || value.isEmpty) return 'Password is required';
                         return null;
                       },
                     ),
@@ -214,32 +168,28 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: kBlue,
                           foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8)),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                           elevation: 0,
                         ),
-                        onPressed: _login,
-                        child: const Text('Login',
-                            style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold)),
+                        onPressed: _loading ? null : _login,
+                        child: _loading
+                            ? const SizedBox(width: 22, height: 22,
+                            child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                            : const Text('Login',
+                            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                       ),
                     ),
                     const SizedBox(height: 14),
 
-                    // Signup link
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text("Don't have an account? ",
                             style: TextStyle(color: Colors.grey)),
                         GestureDetector(
-                          onTap: () => Navigator.pushNamed(
-                              context, '/signup'),
+                          onTap: () => Navigator.pushNamed(context, '/signup'),
                           child: const Text('Sign Up',
-                              style: TextStyle(
-                                  color: kBlue,
-                                  fontWeight: FontWeight.bold)),
+                              style: TextStyle(color: kBlue, fontWeight: FontWeight.bold)),
                         ),
                       ],
                     ),

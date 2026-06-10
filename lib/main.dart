@@ -4,20 +4,30 @@ import 'provider/cart_model.dart';
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/cart_screen.dart';
-import 'screens/ product_detail_screen.dart';
+import 'screens/product_detail_screen.dart';
 import 'screens/checkout_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/edit_profile_screen.dart';
 import 'screens/signup_screen.dart';
+import 'screens/order_tracking_screen.dart';
 import 'models/user_model.dart';
-// === PHASE 2: Naye screens ===
+import 'services/auth_service.dart';
+// PHASE 2
 import 'screens/recipes/recipe_list_screen.dart';
 import 'screens/ingredients/ingredient_list_screen.dart';
 
-// Global current user
+// Global current user (in-memory, loaded from saved prefs on start)
 UserModel currentUser = UserModel();
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Auto-load saved user if token exists
+  final savedUser = await AuthService.getSavedUser();
+  if (savedUser != null) {
+    currentUser = savedUser;
+  }
+
   runApp(
     ChangeNotifierProvider(
       create: (_) => CartModel(),
@@ -31,6 +41,8 @@ class ChefNovaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isLoggedIn = currentUser.id != 0;
+
     return MaterialApp(
       title: 'ChefNova',
       debugShowCheckedModeBanner: false,
@@ -40,18 +52,17 @@ class ChefNovaApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      initialRoute: '/login',
+      initialRoute: isLoggedIn ? '/' : '/login',
       routes: {
-        // === Purane routes (bilkul waise hi) ===
-        '/login':        (context) => const LoginScreen(),
-        '/signup':       (context) => const SignupScreen(),
-        '/':             (context) => const HomeScreen(),
-        '/detail':       (context) => const ProductDetailScreen(),
-        '/cart':         (context) => const CartScreen(),
-        '/checkout':     (context) => const CheckoutScreen(),
-        '/profile':      (context) => const ProfileScreen(),
-        '/edit_profile': (context) => const EditProfileScreen(),
-        // === PHASE 2: Naye routes ===
+        '/login':              (context) => const LoginScreen(),
+        '/signup':             (context) => const SignupScreen(),
+        '/':                   (context) => const HomeScreen(),
+        '/detail':             (context) => const ProductDetailScreen(),
+        '/cart':               (context) => const CartScreen(),
+        '/checkout':           (context) => const CheckoutScreen(),
+        '/profile':            (context) => const ProfileScreen(),
+        '/edit_profile':       (context) => const EditProfileScreen(),
+        '/order_tracking':     (context) => const OrderTrackingScreen(),
         '/manage_recipes':     (context) => const RecipeListScreen(),
         '/manage_ingredients': (context) => const IngredientListScreen(),
       },
