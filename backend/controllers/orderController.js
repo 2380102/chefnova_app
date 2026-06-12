@@ -6,7 +6,7 @@ const placeOrder = async (req, res) => {
     const user_id = req.user.id; // JWT se milta hai
     const { recipe_id, quantity, total_price, payment_method, delivery_address, notes } = req.body;
 
-    if (!recipe_id || !quantity || !total_price || !payment_method) {
+    if (!recipe_id || !quantity || total_price === undefined || total_price === null || !payment_method) {
       return res.status(400).json({
         success: false,
         message: 'recipe_id, quantity, total_price aur payment_method required hain'
